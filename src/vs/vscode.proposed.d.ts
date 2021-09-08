@@ -911,6 +911,7 @@ declare module 'vscode' {
 		 * For more information on events that can send data see "DEC Private Mode Set (DECSET)" on
 		 * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html
 		 */
+		// todo@API Maybe, isInteractedWith to align with other isXYZ
 		readonly interactedWith: boolean;
 	}
 
@@ -2865,10 +2866,10 @@ declare module 'vscode' {
 		 * @param document The document in which the command was invoked.
 		 * @param position The position at which the command was invoked.
 		 * @param token A cancellation token.
-		 * @returns A type hierarchy item or a thenable that resolves to such. The lack of a result can be
-		 * signaled by returning `undefined` or `null`.
+		 * @returns One or multiple type hierarchy items or a thenable that resolves to such. The lack of a result can be
+		 * signaled by returning `undefined`, `null`, or an empty array.
 		 */
-		prepareTypeHierarchy(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<TypeHierarchyItem[]>;
+		prepareTypeHierarchy(document: TextDocument, position: Position, token: CancellationToken): ProviderResult<TypeHierarchyItem | TypeHierarchyItem[]>;
 
 		/**
 		 * Provide all supertypes for an item, e.g all types from which a type is derived/inherited. In graph terms this describes directed
@@ -2901,7 +2902,7 @@ declare module 'vscode' {
 		 *
 		 * @param selector A selector that defines the documents this provider is applicable to.
 		 * @param provider A type hierarchy provider.
-		 * @return A [disposable](#Disposable) that unregisters this provider when being disposed.
+		 * @returns {@link Disposable disposable} that unregisters this provider when being disposed.
 		 */
 		export function registerTypeHierarchyProvider(selector: DocumentSelector, provider: TypeHierarchyProvider): Disposable;
 	}
@@ -2944,6 +2945,23 @@ declare module 'vscode' {
 	export interface QuickPickItemButtonEvent<T extends QuickPickItem> {
 		button: QuickInputButton;
 		item: T;
+	}
+
+	//#endregion
+
+	//#region @mjbvz https://github.com/microsoft/vscode/issues/40607
+	export interface MarkdownString {
+		/**
+		 * Indicates that this markdown string can contain raw html tags. Default to false.
+		 *
+		 * When `supportHtml` is false, the markdown renderer will strip out any raw html tags
+		 * that appear in the markdown text. This means you can only use markdown syntax for rendering.
+		 *
+		 * When `supportHtml` is true, the markdown render will also allow a safe subset of html tags
+		 * and attributes to be rendered. See https://github.com/microsoft/vscode/blob/6d2920473c6f13759c978dd89104c4270a83422d/src/vs/base/browser/markdownRenderer.ts#L296
+		 * for a list of all supported tags and attributes.
+		 */
+		supportHtml?: boolean;
 	}
 
 	//#endregion

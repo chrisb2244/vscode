@@ -162,11 +162,11 @@ export interface IEditorPane extends IComposite {
 	/**
 	 * Returns the current view state of the editor if any.
 	 *
-	 * This method is optional to implement for the editor pane
-	 * and should only be implemented when the pane can deal with
+	 * This method is optional to override for the editor pane
+	 * and should only be overridden when the pane can deal with
 	 * `IEditorOptions.viewState` to be applied when opening.
 	 */
-	getViewState?(): object | undefined;
+	getViewState(): object | undefined;
 
 	/**
 	 * Finds out if this editor is visible or not.
@@ -300,12 +300,12 @@ export interface IUntitledTextResourceEditorInput extends IBaseTextResourceEdito
 export interface IResourceSideBySideEditorInput extends IBaseUntypedEditorInput {
 
 	/**
-	 * The left hand side editor to open inside a side-by-side editor.
+	 * The right hand side editor to open inside a side-by-side editor.
 	 */
 	readonly primary: IResourceEditorInput | ITextResourceEditorInput | IUntitledTextResourceEditorInput;
 
 	/**
-	 * The right hand side editor to open inside a side-by-side editor.
+	 * The left hand side editor to open inside a side-by-side editor.
 	 */
 	readonly secondary: IResourceEditorInput | ITextResourceEditorInput | IUntitledTextResourceEditorInput;
 }
@@ -570,6 +570,13 @@ export interface IEditorInput extends IDisposable {
 	 * Returns the aria label to be read out by a screen reader.
 	 */
 	getAriaLabel(): string;
+
+	/**
+	 * Returns a descriptor suitable for telemetry events.
+	 *
+	 * Subclasses should extend if they can contribute.
+	 */
+	getTelemetryDescriptor(): { [key: string]: unknown }
 
 	/**
 	 * Returns a type of `IEditorModel` that represents the resolved input.
@@ -919,6 +926,7 @@ interface IEditorPartConfiguration {
 	mouseBackForwardToNavigate?: boolean;
 	labelFormat?: 'default' | 'short' | 'medium' | 'long';
 	restoreViewState?: boolean;
+	splitInGroupLayout?: 'vertical' | 'horizontal';
 	splitSizing?: 'split' | 'distribute';
 	splitOnDragAndDrop?: boolean;
 	limit?: {
